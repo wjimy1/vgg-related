@@ -22,6 +22,7 @@ SEARCH_SPACE = {
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_ROOT = os.path.join(SCRIPT_DIR, "data")
 MODEL_PATH = os.path.join(SCRIPT_DIR, "checkpoint", "cifar10_vgg.pth")
 RESULT_CSV = os.path.join(SCRIPT_DIR, "fine_tune_results.csv")
 TARGET_CLASS = 0 
@@ -52,11 +53,11 @@ print("⏳ 正在加载数据...")
 CIFAR_MEAN = (0.4914, 0.4822, 0.4465)
 CIFAR_STD = (0.2023, 0.1994, 0.2010)
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(CIFAR_MEAN, CIFAR_STD)])
-trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+trainset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=True, download=True, transform=transform)
 indices = [i for i, label in enumerate(trainset.targets) if label == TARGET_CLASS]
 subset = torch.utils.data.Subset(trainset, indices[:500])
 forget_loader = torch.utils.data.DataLoader(subset, batch_size=32, shuffle=False)
-testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+testset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=False, download=True, transform=transform)
 test_loader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False)
 
 def evaluate(model):

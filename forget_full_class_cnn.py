@@ -19,6 +19,7 @@ args = parser.parse_args()
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_ROOT = os.path.join(SCRIPT_DIR, "data")
 MODEL_PATH = os.path.join(SCRIPT_DIR, "checkpoint", "cifar10_vgg.pth")
 CIFAR_MEAN = (0.4914, 0.4822, 0.4465)
 CIFAR_STD = (0.2023, 0.1994, 0.2010)
@@ -52,7 +53,7 @@ def get_loaders(target_class):
     
     # 1. 获取训练集 (用于计算 Fisher Info)
     # 我们只挑选属于 "目标类别" 的图片，因为我们要找的是对"这个类别"重要的突触
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+    trainset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=True, download=True, transform=transform)
     
     # 筛选出 Target Class 的索引
     indices = [i for i, label in enumerate(trainset.targets) if label == target_class]
@@ -61,7 +62,7 @@ def get_loaders(target_class):
     forget_loader = torch.utils.data.DataLoader(subset, batch_size=32, shuffle=False)
     
     # 2. 获取测试集 (用于评估)
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+    testset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=False, download=True, transform=transform)
     test_loader = torch.utils.data.DataLoader(testset, batch_size=100, shuffle=False)
     
     return forget_loader, test_loader

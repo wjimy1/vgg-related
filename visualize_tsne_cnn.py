@@ -12,6 +12,7 @@ import os
 # ================= 配置 =================
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_ROOT = os.path.join(SCRIPT_DIR, "data")
 MODEL_PATH_ORIGINAL = os.path.join(SCRIPT_DIR, "checkpoint", "cifar10_vgg.pth")
 FIG_DIR = os.path.join(SCRIPT_DIR, "figs")
 os.makedirs(FIG_DIR, exist_ok=True)
@@ -47,7 +48,7 @@ class VGG_Small(nn.Module):
 # ================= 准备数据 =================
 print("正在加载测试数据...")
 transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))])
-testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+testset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=False, download=True, transform=transform)
 loader = torch.utils.data.DataLoader(testset, batch_size=SAMPLES, shuffle=True)
 inputs, labels = next(iter(loader))
 inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)

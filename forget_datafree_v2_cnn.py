@@ -9,6 +9,7 @@ import os
 # ================= 配置 =================
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_ROOT = os.path.join(SCRIPT_DIR, "data")
 MODEL_PATH = os.path.join(SCRIPT_DIR, "checkpoint", "cifar10_vgg.pth")
 TARGET_CLASS = 0  # 飞机
 
@@ -36,8 +37,8 @@ class VGG_Small(nn.Module):
 # ================= 数据准备 (仅 Forget Set) =================
 def get_dataloaders():
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))])
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+    trainset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=True, download=True, transform=transform)
+    testset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=False, download=True, transform=transform)
     
     # 只取 200 张飞机图片计算梯度
     target_indices = [i for i, label in enumerate(trainset.targets) if label == TARGET_CLASS]

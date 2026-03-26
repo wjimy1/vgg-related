@@ -15,6 +15,7 @@ EPOCHS = 20  # 20轮足够跑到 85%+
 LR = 0.01    # 使用 SGD + Momentum
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_ROOT = os.path.join(SCRIPT_DIR, "data")
 SAVE_PATH = os.path.join(SCRIPT_DIR, "checkpoint", "cifar10_vgg.pth")
 
 print(f"Using Device: {DEVICE}")
@@ -35,12 +36,12 @@ test_transform = transforms.Compose([
 ])
 
 # 自动下载到 ./data 目录
-trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+trainset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=True,
                                         download=True, transform=train_transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                           shuffle=True, num_workers=2)
 
-testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+testset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=False,
                                        download=True, transform=test_transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=100, # 测试集 Batch 可以大点
                                          shuffle=False, num_workers=2)

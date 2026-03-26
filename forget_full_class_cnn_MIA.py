@@ -17,6 +17,7 @@ args = parser.parse_args()
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_ROOT = os.path.join(SCRIPT_DIR, "data")
 MODEL_PATH = os.path.join(SCRIPT_DIR, "checkpoint", "cifar10_vgg.pth")
 CIFAR_MEAN = (0.4914, 0.4822, 0.4465)
 CIFAR_STD = (0.2023, 0.1994, 0.2010)
@@ -49,14 +50,14 @@ def get_target_loaders(target_class):
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(CIFAR_MEAN, CIFAR_STD)])
     
     # 1. Member Data (训练集中的目标类)
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+    trainset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=True, download=True, transform=transform)
     train_idx = [i for i, label in enumerate(trainset.targets) if label == target_class]
     # 取前1000个做MIA member
     member_subset = torch.utils.data.Subset(trainset, train_idx[:1000])
     member_loader = torch.utils.data.DataLoader(member_subset, batch_size=64, shuffle=False)
 
     # 2. Non-Member Data (测试集中的目标类)
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+    testset = torchvision.datasets.CIFAR10(root=DATA_ROOT, train=False, download=True, transform=transform)
     test_idx = [i for i, label in enumerate(testset.targets) if label == target_class]
     non_member_subset = torch.utils.data.Subset(testset, test_idx)
     non_member_loader = torch.utils.data.DataLoader(non_member_subset, batch_size=64, shuffle=False)
